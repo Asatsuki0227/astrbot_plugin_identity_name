@@ -1,0 +1,5 @@
+name: astrbot-plugin-identity-name
+version: 0.1.0
+author: codex
+description: 识别账号身份并在 LLM 对话中准确称呼用户名字
+main: main.py
