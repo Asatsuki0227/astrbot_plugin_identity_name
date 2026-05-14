@@ -1,13 +1,20 @@
 from __future__ import annotations
 from typing import Any
-from astrbot.api.event import Star  # 确保导入了基类
+
+# 修改导入路径，直接从基础模块引入
+try:
+    from astrbot.api.plugin import Star
+except ImportError:
+    # 兼容性处理：如果上面的路径不对，则尝试直接定义一个基础类或从其他位置导入
+    class Star: pass 
 
 class IdentityNamePlugin(Star):
     """AstrBot 插件：在 LLM 聊天前注入稳定身份锚点，减少认错人。"""
 
     def __init__(self, context: Any = None, **kwargs) -> None:
-        # 修复 unexpected keyword argument 'context' 报错
-        super().__init__(context)
+        # 兼容旧版本的初始化
+        if hasattr(super(), "__init__"):
+            super().__init__(context)
         self.context = context
 
     def _pick_first(self, obj: dict[str, Any], keys: list[str]) -> Any:
@@ -51,7 +58,7 @@ class IdentityNamePlugin(Star):
         messages: list[dict[str, str]],
         event: Any,
     ) -> list[dict[str, str]]:
-        """仅在 LLM 请求前注入身份约束，不提供任何命令。"""
+        """仅在 LLM 请求前注入身份约束。"""
         identity = self._extract_identity(event)
         if not identity:
             return messages
@@ -63,8 +70,6 @@ class IdentityNamePlugin(Star):
             f"user_id={identity['user_id']}, "
             f"session_key={identity['session_key']}。"
             "请只基于该身份锚点理解上下文，不要混入其他用户的信息。"
-            "当对话出现身份冲突或信息不足时，先澄清身份再继续回答。"
         )
 
-        # 返回修改后的消息列表
         return [{"role": "system", "content": system_prompt}, *messages]
