@@ -1,5 +1,16 @@
-name: astrbot_plugin_identity_name
-version: 0.1.0
-author: 诶嘿
-description: 识别账号身份并在 LLM 对话中准确称呼用户名字
-main: main.py
+name: astrbot_plugin_user_recognizer
+desc: 为每个 user_id 建立独立档案，并在 LLM 请求前注入身份上下文，让机器人分清是在跟谁说话。
+help: |
+  普通命令：
+    /我叫 <名字>            让机器人记住你叫什么
+    /我的资料              查看当前保存的资料
+    /关于我 <一句话>        补充一句自我介绍
+    /忘了我                清空自己的档案
+
+  管理命令（需 admin）：
+    /识人列表              列出所有已识别用户
+    /设置备注 <uid> <备注>  给某个 user_id 补一段备注
+    /删除档案 <uid>         删除某个 user_id 的档案
+
+version: 1.0.0
+author: KanadePet
